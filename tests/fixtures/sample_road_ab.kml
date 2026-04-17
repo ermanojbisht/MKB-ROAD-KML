@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Sample Road A-B</name>
+    <Style id="roadStyle">
+      <LineStyle>
+        <color>ff0000ff</color>
+        <width>4</width>
+      </LineStyle>
+    </Style>
+    <Placemark>
+      <name>Road Segment A-B</name>
+      <styleUrl>#roadStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <coordinates>
+          77.20900,28.61000,220.0
+          77.20950,28.61045,221.0
+          77.21000,28.61090,222.0
+          77.21050,28.61135,222.5
+          77.21100,28.61180,223.0
+          77.21150,28.61225,223.5
+          77.21200,28.61270,224.0
+          77.21250,28.61315,224.5
+          77.21300,28.61360,225.0
+          77.21350,28.61405,225.5
+          77.21400,28.61450,226.0
+          77.21450,28.61495,226.5
+          77.21500,28.61540,227.0
+          77.21550,28.61585,227.5
+          77.21600,28.61630,228.0
+          77.21650,28.61675,228.5
+          77.21700,28.61720,229.0
+          77.21750,28.61765,229.5
+          77.21800,28.61810,230.0
+          77.21850,28.61855,230.5
+        </coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+</kml>

@@ -1,0 +1,51 @@
+# ── Virtual environments ──────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── Python cache ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# ── PyInstaller build artefacts ───────────────────────────────────
+build/
+dist/
+*.spec.bak
+
+# ── Test / coverage artefacts ─────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ── Editor / IDE ──────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS noise ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Claude Code internal ──────────────────────────────────────────
+.claude/
+
+# ── App runtime data (not source) ─────────────────────────────────
+# Global config lives in ~/.mkb-road-kml/ — nothing to ignore here.
+# Log files if ever written into the repo root:
+*.log
+
+# ── Legacy / scratch data files at repo root ──────────────────────
+# The original script inputs — not part of the application source
+gps_of_road.xlsx
+road_path.kml
+
+# ── Project document (internal dev notes, not for end users) ──────
+CLAUDE.md
+VISION.md

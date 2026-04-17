@@ -1,0 +1,4 @@
+# Development & testing dependencies (not needed in the packaged binary)
+-r requirements.txt
+pytest
+pyinstaller
