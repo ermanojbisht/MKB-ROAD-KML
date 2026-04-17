@@ -96,7 +96,7 @@ def read_kml_meta(path: str | Path) -> dict:
         "name":          _find_text(f".//{{{_NS}}}Document/{{{_NS}}}name",        "Road Path"),
         "description":   _find_text(f".//{{{_NS}}}Document/{{{_NS}}}description", ""),
         "line_color":    _find_text(f".//{{{_NS}}}LineStyle/{{{_NS}}}color",       "ff0000ff"),
-        "line_width":    int(_find_text(f".//{{{_NS}}}LineStyle/{{{_NS}}}width",   "4") or "4"),
+        "line_width":    int(float(_find_text(f".//{{{_NS}}}LineStyle/{{{_NS}}}width", "4") or "4")),
         "altitude_mode": _find_text(f".//{{{_NS}}}LineString/{{{_NS}}}altitudeMode", "relativeToGround"),
     }
 

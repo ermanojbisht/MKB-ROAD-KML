@@ -268,10 +268,9 @@ def compute_chainage(
             if delta >= bend_threshold:
                 ch_val = start_ch + cumulative
                 # Avoid duplicate if very close to an interval marker
-                if not markers or haversine_m(markers[-1].__dict__
-                                              if hasattr(markers[-1], '__dict__') else
-                                              (markers[-1].lon, markers[-1].lat, markers[-1].alt),
-                                              p2) > interval * 0.1:
+                if not markers or haversine_m(
+                        (markers[-1].lon, markers[-1].lat, markers[-1].alt), p2
+                ) > interval * 0.1:
                     markers.append(_make_marker(p2, ch_val, label_fmt))
 
     log.debug("Chainage: %d markers for %d coord line", len(markers), len(coords))

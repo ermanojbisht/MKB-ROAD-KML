@@ -47,20 +47,40 @@ _FIELD_LABELS = {
     "end_alt":   "End Altitude",
 }
 
-_REQUIRED_SPEC = """Required columns (minimum):
-  • Start Latitude   — decimal degrees, range −90 to +90     (e.g. 28.610234)
-  • Start Longitude  — decimal degrees, range −180 to +180   (e.g. 77.209456)
+_REQUIRED_SPEC = """\
+━━━  REQUIRED COLUMNS (अनिवार्य कॉलम)  ━━━
 
-Optional but recommended:
-  • Start Altitude   — metres above ground                   (e.g. 220.5)
+  • Start Latitude  / शुरुआती अक्षांश
+      Decimal degrees, range −90 to +90   |   दशमलव अंश, सीमा −90 से +90
+      Example / उदाहरण: 28.610234
+
+  • Start Longitude  / शुरुआती देशांतर
+      Decimal degrees, range −180 to +180 |   दशमलव अंश, सीमा −180 से +180
+      Example / उदाहरण: 77.209456
+
+━━━  OPTIONAL — RECOMMENDED (वैकल्पिक — अनुशंसित)  ━━━
+
+  • Start Altitude  / शुरुआती ऊँचाई
+      Metres above ground  |  जमीन से मीटर में   (e.g. 220.5)
+
   • End Latitude / End Longitude / End Altitude
-      — if your data is segment-based (one row = one road segment),
-        the End columns of the last row are used as the final KML point.
+    (अंतिम अक्षांश / अंतिम देशांतर / अंतिम ऊँचाई)
+      Segment-based data: one row = one road segment.
+      खंड-आधारित डेटा: एक पंक्ति = एक सड़क खंड।
+      The End columns of the last row become the final KML point.
+      अंतिम पंक्ति के End कॉलम KML का अंतिम बिंदु बनते हैं।
 
-Tips:
-  • Column names are matched automatically (case-insensitive, underscores ignored).
-  • Coordinates must be decimal degrees — NOT degrees/minutes/seconds.
-  • Do not use comma as decimal separator.
+━━━  TIPS  /  सुझाव  ━━━
+
+  • Column names are matched automatically (case-insensitive).
+    कॉलम के नाम स्वतः पहचाने जाते हैं (बड़े/छोटे अक्षर अनदेखे)।
+
+  • Use DECIMAL DEGREES only — NOT degrees / minutes / seconds.
+    केवल दशमलव अंश (Decimal Degrees) उपयोग करें —
+    डिग्री/मिनट/सेकंड प्रारूप स्वीकार नहीं होगा।
+
+  • Do NOT use comma as decimal separator  (wrong: 28,610234).
+    दशमलव चिह्न के रूप में अल्पविराम (,) का प्रयोग न करें।
 """
 
 _WIZARD_STYLE = """
@@ -232,15 +252,15 @@ class ExcelKmlWizard(QWidget):
         layout.addSpacing(8)
 
         # Spec box
-        spec_group = QGroupBox("Required column format")
+        spec_group = QGroupBox("Required column format  /  अनिवार्य कॉलम प्रारूप")
         sg_layout = QVBoxLayout(spec_group)
         spec_box = QTextEdit()
         spec_box.setObjectName("specBox")
         spec_box.setReadOnly(True)
         spec_box.setPlainText(_REQUIRED_SPEC)
-        spec_box.setFixedHeight(160)
+        spec_box.setMinimumHeight(180)
         sg_layout.addWidget(spec_box)
-        layout.addWidget(spec_group)
+        layout.addWidget(spec_group, stretch=1)
         layout.addSpacing(16)
 
         # File picker

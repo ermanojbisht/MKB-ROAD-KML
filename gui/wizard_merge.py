@@ -181,6 +181,7 @@ class MergeWizard(QWidget):
         self._s1_list = QListWidget()
         self._s1_list.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         self._s1_list.currentRowChanged.connect(self._s1_on_select)
+        self._s1_list.model().rowsMoved.connect(self._s1_on_drag_reorder)
         left_layout.addWidget(self._s1_list, stretch=1)
 
         btn_row = QHBoxLayout()
@@ -229,7 +230,7 @@ class MergeWizard(QWidget):
             path = Path(p)
             if path not in self._kml_paths:
                 self._kml_paths.append(path)
-                color = _SEG_COLORS[len(self._kml_paths) - 1 % len(_SEG_COLORS)]
+                color = _SEG_COLORS[(len(self._kml_paths) - 1) % len(_SEG_COLORS)]
                 item = QListWidgetItem(f"  {path.name}")
                 item.setForeground(QColor(color))
                 item.setData(Qt.ItemDataRole.UserRole, str(path))
@@ -259,6 +260,13 @@ class MergeWizard(QWidget):
 
     def _s1_on_select(self, row: int) -> None:
         pass  # could highlight selected segment in map — future enhancement
+
+    def _s1_on_drag_reorder(self) -> None:
+        self._kml_paths = [
+            Path(self._s1_list.item(i).data(Qt.ItemDataRole.UserRole))
+            for i in range(self._s1_list.count())
+        ]
+        self._s1_refresh_map()
 
     def _s1_refresh_map(self) -> None:
         self._s1_map.clear()
@@ -496,7 +504,6 @@ class MergeWizard(QWidget):
                 overrides.append(conn)
 
             # Patch trim values into config
-            from unittest.mock import MagicMock
             class TrimConfig:
                 def __init__(self, base_cfg, trims):
                     self._base = base_cfg

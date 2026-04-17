@@ -120,44 +120,59 @@ layers.forEach(function(layer, idx) {{
     var color = layer.color || COLORS[idx % COLORS.length];
     var pts = layer.coords.map(function(c) {{ return [c[1], c[0]]; }});
 
-    if (pts.length === 0) return;
+    if (pts.length > 0) {{
+        var poly = L.polyline(pts, {{
+            color: color,
+            weight: 4,
+            opacity: 0.85
+        }}).addTo(map);
 
-    var poly = L.polyline(pts, {{
-        color: color,
-        weight: 4,
-        opacity: 0.85
-    }}).addTo(map);
+        allBounds.push(poly.getBounds());
 
-    allBounds.push(poly.getBounds());
+        L.circleMarker(pts[0], {{
+            radius: 8,
+            color: '#006400',
+            fillColor: '#00c800',
+            fillOpacity: 1,
+            weight: 2
+        }}).addTo(map).bindTooltip(layer.name + ' — Start', {{permanent: false}});
 
-    L.circleMarker(pts[0], {{
-        radius: 8,
-        color: '#006400',
-        fillColor: '#00c800',
-        fillOpacity: 1,
-        weight: 2
-    }}).addTo(map).bindTooltip(layer.name + ' — Start', {{permanent: false}});
+        L.circleMarker(pts[pts.length-1], {{
+            radius: 8,
+            color: '#8b0000',
+            fillColor: '#e60000',
+            fillOpacity: 1,
+            weight: 2
+        }}).addTo(map).bindTooltip(layer.name + ' — End', {{permanent: false}});
 
-    L.circleMarker(pts[pts.length-1], {{
-        radius: 8,
-        color: '#8b0000',
-        fillColor: '#e60000',
-        fillOpacity: 1,
-        weight: 2
-    }}).addTo(map).bindTooltip(layer.name + ' — End', {{permanent: false}});
+        var arrowInterval = Math.max(1, Math.floor(pts.length / 5));
+        for (var i = arrowInterval; i < pts.length - 1; i += arrowInterval) {{
+            var p1 = pts[i-1], p2 = pts[i];
+            var dx = p2[1] - p1[1], dy = p2[0] - p1[0];
+            var angle = Math.atan2(dx, dy) * 180 / Math.PI;
+            var icon = L.divIcon({{
+                className: '',
+                html: '<div class="direction-arrow" style="transform:rotate(' + angle + 'deg)">▲</div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            }});
+            L.marker(pts[i], {{icon: icon}}).addTo(map);
+        }}
+    }}
 
-    var arrowInterval = Math.max(1, Math.floor(pts.length / 5));
-    for (var i = arrowInterval; i < pts.length - 1; i += arrowInterval) {{
-        var p1 = pts[i-1], p2 = pts[i];
-        var dx = p2[1] - p1[1], dy = p2[0] - p1[0];
-        var angle = Math.atan2(dx, dy) * 180 / Math.PI;
-        var icon = L.divIcon({{
-            className: '',
-            html: '<div class="direction-arrow" style="transform:rotate(' + angle + 'deg)">▲</div>',
-            iconSize: [20, 20],
-            iconAnchor: [10, 10]
+    // Chainage / point markers
+    if (layer.markers && layer.markers.length > 0) {{
+        layer.markers.forEach(function(m) {{
+            // m = [lon, lat, name]
+            var pt = [m[1], m[0]];
+            L.circleMarker(pt, {{
+                radius: 5,
+                color: '#1a1a1a',
+                fillColor: color,
+                fillOpacity: 0.95,
+                weight: 1.5
+            }}).addTo(map).bindTooltip(m[2], {{permanent: false, direction: 'top'}});
         }});
-        L.marker(pts[i], {{icon: icon}}).addTo(map);
     }}
 }});
 
@@ -211,6 +226,23 @@ class MapCanvas(QWidget):
             "coords": [[c[0], c[1], c[2]] for c in coords],
         })
         log.debug("MapCanvas: added layer '%s' with %d points", name, len(coords))
+        self._render()
+
+    def load_markers(
+        self,
+        placemarks: list,          # list[ChainagePlacemark]
+        *,
+        color: str = "#f59e0b",
+    ) -> None:
+        """Add chainage point markers to the map (separate from the line layer)."""
+        marker_data = [[p.lon, p.lat, p.name] for p in placemarks]
+        self._layers.append({
+            "name": "Chainage markers",
+            "color": color,
+            "coords": [],
+            "markers": marker_data,
+        })
+        log.debug("MapCanvas: added %d chainage markers", len(placemarks))
         self._render()
 
     def clear(self) -> None:

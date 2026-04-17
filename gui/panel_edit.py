@@ -115,6 +115,17 @@ def _sep() -> QFrame:
     return f
 
 
+def _kml_color_to_html(kml_color: str) -> str:
+    """Convert KML AABBGGRR hex string to HTML #RRGGBB."""
+    c = (kml_color or "").strip()
+    if len(c) == 8:
+        try:
+            return f"#{c[6:8]}{c[4:6]}{c[2:4]}"
+        except (IndexError, ValueError):
+            pass
+    return "#ff8800"  # bright orange fallback — visible on light and dark maps
+
+
 def _backup_version(path: Path) -> Path | None:
     """
     Copy *path* to <stem>_v{n}.kml in the same folder (incrementing n).
@@ -549,10 +560,15 @@ class EditPanel(QWidget):
         self._preview_placemarks = placemarks
         self._has_preview = True
 
-        # Show: original faded blue + processed bright white
+        # Use the KML's own line color for the re-processed layer
+        html_color = _kml_color_to_html(self._color_edit.text().strip())
+
+        # Show: original faded + re-processed in original color + chainage dots
         self._map.clear()
-        self._map.load_coords(self._coords, name="Original", color="#4dabf770")
-        self._map.load_coords(coords, name="Re-processed", color="#ffffff")
+        self._map.load_coords(self._coords, name="Original", color="#88888855")
+        self._map.load_coords(coords, name="Re-processed", color=html_color)
+        if placemarks:
+            self._map.load_markers(placemarks, color=html_color)
 
         pt_delta = len(coords) - len(self._coords)
         sign = "+" if pt_delta >= 0 else ""
